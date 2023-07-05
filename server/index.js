@@ -11,6 +11,7 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/users", require("./routes/api/userRoutes"));
+app.use("/api/items", require("./routes/api/itemRoutes"));
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

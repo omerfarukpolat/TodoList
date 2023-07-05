@@ -70,6 +70,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
+  sessionStorage.clear();
   res.status(200).json({ message: "Logged out" });
 });
 
