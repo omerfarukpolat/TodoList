@@ -11,6 +11,9 @@ const itemSchema = mongoose.Schema(
       type: String,
       required: [true, "Please provide a valid text!"],
     },
+    tags: {
+      type: [String],
+    },
     thumbnailImage: mongoose.Schema.Types.Mixed,
     file: mongoose.Schema.Types.Mixed,
   },

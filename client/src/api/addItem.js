@@ -1,6 +1,6 @@
 import axios from "axios";
 
-async function addItem(thumbnailImage, text, file) {
+async function addItem(thumbnailImage, text, file, tags) {
   try {
     const { data } = await axios.post(
       "/api/items/",
@@ -8,6 +8,7 @@ async function addItem(thumbnailImage, text, file) {
         thumbnailImage,
         text,
         file,
+        tags,
       },
       {
         headers: {

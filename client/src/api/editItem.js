@@ -1,6 +1,6 @@
 import axios from "axios";
 
-async function editItem(id, thumbnailImage, text, file) {
+async function editItem(id, thumbnailImage, text, file, tags) {
   try {
     const { data } = await axios.put(
       `/api/items/${id}`,
@@ -8,6 +8,7 @@ async function editItem(id, thumbnailImage, text, file) {
         thumbnailImage,
         text,
         file,
+        tags,
       },
       {
         headers: {

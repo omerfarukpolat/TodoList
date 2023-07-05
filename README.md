@@ -3,7 +3,7 @@ Certainly! Here's the complete `README.md` file that includes all the instructio
 ```markdown
 # TodoList App
 
-Welcome to the Project Name repository! This project does XYZ and is built using Node.js and npm.
+Welcome to the TodoList App repository! This project does XYZ and is built using Node.js and npm.
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ To get started, follow these steps:
 1. Clone this repository to your local machine using the following command:
 
    ```shell
-   git clone https://github.com/your-username/project-name.git
+   git clone https://github.com/omerfarukpolat/TodoList.git
    ```
 
 2. Navigate to the project's directory:
@@ -54,9 +54,14 @@ If you'd like to contribute to this project, please follow these steps:
 4. Push your branch: `git push origin my-new-feature`.
 5. Submit a pull request.
 
-## License
+## Development Stages
+To set up the development environment for this application, you need to create a .env file that will hold your environment variables. You can use the provided .env.example file as a template to create your own .env file.
 
-This project is licensed under the [MIT License](LICENSE).
-```
+To create a user, simply navigate to the Login Page and click on the "Sign Up" button. Fill in the required fields such as your username, email, and password. Once you've created an account, you can proceed to log in to the application.
 
-Feel free to copy the above code directly and make any necessary modifications for your project.
+The application utilizes Mongoose as the database for managing users and todos. User passwords are securely hashed using bcrypt, and JSON Web Tokens (JWT) are generated to authenticate and authorize users.
+
+In the database, there are 2 collections named "users" and "items". "Users" collection holds
+registered users' information and "items" collection holds the todos of the users.
+
+To establish a connection to your Mongoose Cluster, you need to provide the Mongoose Cluster URL by setting the MONGO_URL variable in the .env file. If you don't have an account, please feel free to contact me or create one.

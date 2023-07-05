@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { Avatar, Button, Input, Menu } from "antd";
+import { Avatar, Button, Input, Menu, Select } from "antd";
 import React from "react";
 import { LogoutOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import AddItemDialog from "../components/addItemDialog";
@@ -12,6 +12,7 @@ import getItems from "../api/getItems";
 import { setUserItemsData } from "../redux/dataSlice";
 import EditItemDialog from "../components/editItemDialog";
 import TextArea from "antd/es/input/TextArea";
+import deleteItem from "../api/deleteItem";
 
 const Search = Input.Search;
 
@@ -21,16 +22,48 @@ const MainPage = () => {
   const [loading, setLoading] = useState(false);
   const [filteredData, setfilteredData] = useState([]);
   const [initialData, setInitialData] = useState([]);
+  const [isRemoveConfirmed, setIsRemoveConfirmed] = useState(false);
+  const [uniqueTags, setUniqueTags] = useState([]);
   const user = useSelector((state) => state.data.currentUser);
   const data = useSelector((state) => state.data.userItemsData);
   const [userName, setUserName] = useState("");
   const [isAddItemDialogOpen, setIsAddItemDialogOpen] = useState(false);
+
+  const handleChange = (value) => {
+    if (value.length === 0) {
+      setfilteredData(initialData);
+    } else {
+      let tempFilteredData = [];
+      initialData.forEach((item) => {
+        value.forEach((tag) => {
+          if (item.tags.includes(tag)) {
+            tempFilteredData.push(item);
+          }
+        });
+      });
+      setfilteredData(tempFilteredData);
+    }
+  };
 
   useEffect(() => {
     if (!sessionStorage.getItem("accessToken")) {
       navigate("/login");
     }
   }, [user]);
+
+  useEffect(() => {
+    //fetch unique tags
+    let tags = [];
+    initialData.forEach((item) => {
+      item.tags.forEach((tag) => {
+        if (!tags.includes(tag)) {
+          tags.push(tag);
+        }
+      });
+    });
+    setUniqueTags(tags);
+  }, [initialData]);
+
   useEffect(() => {
     if (!isAddItemDialogOpen) {
       getItems().then((response) => {
@@ -39,6 +72,15 @@ const MainPage = () => {
       });
     }
   }, [isAddItemDialogOpen]);
+
+  useEffect(() => {
+    if (isRemoveConfirmed) {
+      getItems().then((response) => {
+        setfilteredData(response);
+        setIsRemoveConfirmed(false);
+      });
+    }
+  }, [isRemoveConfirmed]);
 
   useEffect(() => {
     getItems().then((response) => {
@@ -58,16 +100,28 @@ const MainPage = () => {
     }
   };
 
-  const handleOnConfirm = (item) => {
-    console.log(item);
-    addItem(item.thumbnailImage, item.text, item.file).then((response) => {
+  const handleOnDelete = (id) => {
+    deleteItem(id).then((response) => {
       if (response) {
-        alert("Add item successfully");
-        console.log(response);
+        dispatch(setUserItemsData(getItems()));
+        setIsRemoveConfirmed(true);
       } else {
         alert("Invalid username or password");
       }
     });
+    alert("Remove item successfully");
+  };
+
+  const handleOnConfirm = (item) => {
+    addItem(item.thumbnailImage, item.text, item.file, item.tags).then(
+      (response) => {
+        if (response) {
+          alert("Add item successfully");
+        } else {
+          alert("Invalid username or password");
+        }
+      }
+    );
     setIsAddItemDialogOpen(false);
   };
   const handleOnClose = () => {
@@ -161,6 +215,19 @@ const MainPage = () => {
               onChange={(event) => handleSearch(event.target.value)}
               onSearch={(value) => handleSearch(value)}
             />
+            <Select
+              style={{
+                marginBottom: 24,
+                width: 290,
+              }}
+              mode="multiple"
+              placeholder="Filter Tags"
+              size={"large"}
+              onChange={handleChange}
+              options={uniqueTags.map((tag) => {
+                return { value: tag };
+              })}
+            />
             <Button
               style={{
                 marginBottom: 24,
@@ -179,12 +246,16 @@ const MainPage = () => {
               Add new
             </Button>
           </div>
-          <TodoList data={filteredData} />
+          <TodoList
+            data={filteredData}
+            onDeleteConfirm={(id) => handleOnDelete(id)}
+          />
         </div>
         <AddItemDialog
           isOpen={isAddItemDialogOpen}
           onConfirm={handleOnConfirm}
           onClose={handleOnClose}
+          onDelete={handleOnDelete}
         />
       </div>
     </div>

@@ -10,13 +10,14 @@ const getUserItems = asyncHandler(async (req, res) => {
 });
 
 const addItem = asyncHandler(async (req, res) => {
-  const { thumbnailImage, text, file } = req.body;
+  const { thumbnailImage, text, file, tags } = req.body;
   const item = await Item.create({
     userId: req.user.id,
     thumbnailImage: {
       data: thumbnailImage[0],
     },
     text,
+    tags: tags,
     file: {
       data: file[0],
     },
@@ -29,7 +30,7 @@ const addItem = asyncHandler(async (req, res) => {
 });
 
 const updateItem = asyncHandler(async (req, res) => {
-  const { thumbnailImage, text, file } = req.body;
+  const { thumbnailImage, text, file, tags } = req.body;
   const item = await Item.findByIdAndUpdate(
     req.params.id,
     {
@@ -37,6 +38,7 @@ const updateItem = asyncHandler(async (req, res) => {
         data: thumbnailImage[0],
       },
       text,
+      tags: tags,
       file: {
         data: file[0],
       },

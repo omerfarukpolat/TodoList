@@ -14,34 +14,26 @@ import getItems from "../api/getItems";
 import { setUserItemsData } from "../redux/dataSlice";
 import deleteItem from "../api/deleteItem";
 
-const TodoList = ({ data }) => {
+const TodoList = ({ data, onDeleteConfirm }) => {
   const dispatch = useDispatch();
   const [isEditItemDialogOpen, setIsEditItemDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const handleOnConfirm = (item) => {
-    editItem(item.id, item.thumbnailImage, item.text, item.file).then(
-      (response) => {
-        if (response) {
-          alert("Edit item successfully");
-          dispatch(setUserItemsData(getItems()));
-        } else {
-          alert("Invalid username or password");
-        }
-      }
-    );
-    setIsEditItemDialogOpen(false);
-  };
-
-  const handleOnConfirmRemove = (id) => {
-    setSelectedItem(null);
-    deleteItem(id).then((response) => {
+    editItem(
+      item.id,
+      item.thumbnailImage,
+      item.text,
+      item.file,
+      item.tags
+    ).then((response) => {
       if (response) {
+        alert("Edit item successfully");
         dispatch(setUserItemsData(getItems()));
       } else {
         alert("Invalid username or password");
       }
     });
-    alert("Remove item successfully");
+    setIsEditItemDialogOpen(false);
   };
 
   const handleOnClose = () => {
@@ -77,7 +69,7 @@ const TodoList = ({ data }) => {
               <Popconfirm
                 placement="top"
                 title={"Are you sure want to delete this item?"}
-                onConfirm={() => handleOnConfirmRemove(item._id)}
+                onConfirm={() => onDeleteConfirm(item._id)}
                 okText="Yes"
                 cancelText="No"
               >
@@ -95,7 +87,9 @@ const TodoList = ({ data }) => {
                   <Avatar
                     src={
                       item.thumbnailImage
-                        ? item.thumbnailImage.data.thumbUrl
+                        ? item.thumbnailImage.data
+                          ? item.thumbnailImage.data.thumbUrl
+                          : ""
                         : ""
                     }
                   />
