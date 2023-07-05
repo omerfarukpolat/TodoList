@@ -110,6 +110,14 @@ const AddItemDialog = ({ isOpen, onConfirm, onClose }) => {
     >
       <ImgCrop rotationSlider>
         <Upload
+          beforeUpload={(file) => {
+            const isPNG =
+              file.type === "image/png" || file.type === "image/jpeg";
+            if (!isPNG) {
+              message.error(`${file.name} is not a png/jpeg file`);
+            }
+            return isPNG || Upload.LIST_IGNORE;
+          }}
           action="//jsonplaceholder.typicode.com/posts/"
           listType="picture-card"
           fileList={thumbnailImage}
